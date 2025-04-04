@@ -2,7 +2,10 @@ package examen
 
 import org.apache.spark.sql.{DataFrame, Row}
 import org.apache.spark.sql.types._
-import examen.Examen._
+import examen.Examen.Ejercicio1._
+import examen.Examen.Ejercicio2._
+import examen.Examen.Ejercicio3._
+import examen.Examen.Ejercicio4._
 import utils.TestInit
 
 class ExamenTest extends TestInit {
@@ -73,9 +76,51 @@ class ExamenTest extends TestInit {
     val dfOut: DataFrame = ejercicio2(dfTemperaturas)
 
     dfOut.show()
+  }
+
+  "ejercicio3" should "agregar dataframes" in {
+    val schemaEstudiantes = StructType(Seq(
+      StructField("id", IntegerType, nullable = false),
+      StructField("nombre", StringType, nullable = false)
+    ))
+
+    val tuplasEstudiantes: Seq[(Int, String)] =
+      Seq((1, "Juan"),
+        (2, "Pepe"),
+        (3, "Lucas")
+      )
+
+    val dfEstudiantes: DataFrame = newDf(tuplasEstudiantes.map(Row.fromTuple), schemaEstudiantes)
+
+    val schemaResultados = StructType(Seq(
+      StructField("id", IntegerType, nullable = false),
+      StructField("asignatura", StringType, nullable = false),
+      StructField("resultado", DoubleType, nullable = false)
+    ))
+
+    val tuplasResultados: Seq[(Int, String, Double)] =
+      Seq((1, "Matemáticas", 2.1),
+        (1, "Lengua", 5.0),
+        (1, "Inglés", 0.3),
+        (2, "Matemáticas", 7.6),
+        (2, "Lengua", 5.2),
+        (2, "Inglés", 4.4),
+        (2, "Dibujo", 8.0),
+        (3, "Matemáticas", 7.6),
+        (3, "Lengua", 5.2),
+        (3, "Inglés", 3.0),
+        (3, "Música", 5.0),
+      )
+
+    val dfResultados: DataFrame = newDf(tuplasResultados.map(Row.fromTuple), schemaResultados)
+
+    val dfOut: DataFrame = ejercicio3(dfEstudiantes, dfResultados)
+
+    dfOut.show()
 
 
   }
+
 
   "ejercicio4" should "contar número ocurrencias por palabra" in {
 
