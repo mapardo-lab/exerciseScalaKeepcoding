@@ -1,7 +1,7 @@
 package examen
 
 import org.apache.spark.rdd._
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
 
 object Examen {
@@ -13,7 +13,6 @@ object Examen {
      * @param estudiantes contiene nombre, edad y calificación
      * @return
      */
-    // TODO convertir el dataframe a tupla y devolverlo para luego incluirlo en el test should
     def ejercicio1a(estudiantes: DataFrame): DataFrame = estudiantes.filter(col("calificacion") > 8)
 
     /**
@@ -22,7 +21,6 @@ object Examen {
      * @param estudiantes contine nombre, edad y calificación
      * @return
      */
-    // TODO convertir el dataframe a tupla y devolverlo para luego incluirlo en el test should
     def ejercicio1b(estudiantes: DataFrame): DataFrame = estudiantes
       .sort(desc("calificacion"))
       .select("nombre")
@@ -70,5 +68,38 @@ object Examen {
         .groupByKey()
         .map { case (word, values) => (word, values.sum) }
         .sortBy(-_._2)
+    }
+
+    object Ejercicio5 {
+
+      /**
+       * Lectura de fichero .csv con su cabecera
+       *
+       * @param path
+       * @param delimiter
+       * @param spark
+       * @return
+       */
+      def lecturaCsvDf(path: String, delimiter: String = ",")(implicit spark: SparkSession): DataFrame = spark.read
+          .options(Map(("header", "true"), ("delimiter", delimiter)))
+          .csv(path)
+      /**
+       Ejercicio 5: Procesamiento de archivos
+       Pregunta: Carga un archivo CSV que contenga información sobre
+       ventas (id_venta, id_producto, cantidad, precio_unitario)
+       y calcula el ingreso total (cantidad * precio_unitario) por producto.
+       */
+
+      /**
+       * Calcula el ingreso total por producto
+       *
+       * @param ventas contiene id_venta, id_producto, cantidad y precio_unitario
+       * @param spark
+       * @return contiene id_producto, totalIngreso
+       */
+      def ejercicio5(ventas: DataFrame): DataFrame = ventas
+        .withColumn("ingreso", col("cantidad") * col("precio_unitario"))
+        .groupBy("id_producto")
+        .agg(sum("ingreso").alias("totalIngresos"))
     }
 }

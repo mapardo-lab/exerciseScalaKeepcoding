@@ -6,6 +6,7 @@ import examen.Examen.Ejercicio1._
 import examen.Examen.Ejercicio2._
 import examen.Examen.Ejercicio3._
 import examen.Examen.Ejercicio4._
+import examen.Examen.Ejercicio5._
 import utils.TestInit
 
 class ExamenTest extends TestInit {
@@ -121,7 +122,6 @@ class ExamenTest extends TestInit {
 
   }
 
-
   "ejercicio4" should "contar número ocurrencias por palabra" in {
 
     val rdd = sc.parallelize(Seq("agua", "cereza", "gorro","agua", "agua", "gorro"))
@@ -131,4 +131,12 @@ class ExamenTest extends TestInit {
     out.collect() shouldBe Seq(("agua", 3), ("gorro", 2), ("cereza", 1))
   }
 
+  "ejercicio5" should "calcular ingreso total por producto" in {
+
+    val dfVentas = lecturaCsvDf("src/resources/ventas.csv")
+
+    val dfOut: DataFrame = ejercicio5(dfVentas)
+
+    dfOut.show()
+  }
 }
