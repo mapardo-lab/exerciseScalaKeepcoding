@@ -23,7 +23,7 @@ object Examen {
      */
     def ejercicio1b(estudiantes: DataFrame): DataFrame = estudiantes
       .sort(desc("calificacion"))
-      .select("nombre")
+      .select("nombre","calificacion")
   }
 
   object Ejercicio2 {
@@ -58,7 +58,7 @@ object Examen {
   }
     object Ejercicio4 {
       /**
-       * Cuenta el número de ocurrencias por palabra
+       * Cuenta el número de ocurrencias por palabra, ordenadas en orden descencente de número de ocurrencias
        *
        * @param rdd Conjuntos de palabras
        * @return Tupla con la palabra y el número de veces que aparece
@@ -83,15 +83,9 @@ object Examen {
       def lecturaCsvDf(path: String, delimiter: String = ",")(implicit spark: SparkSession): DataFrame = spark.read
           .options(Map(("header", "true"), ("delimiter", delimiter)))
           .csv(path)
-      /**
-       Ejercicio 5: Procesamiento de archivos
-       Pregunta: Carga un archivo CSV que contenga información sobre
-       ventas (id_venta, id_producto, cantidad, precio_unitario)
-       y calcula el ingreso total (cantidad * precio_unitario) por producto.
-       */
 
       /**
-       * Calcula el ingreso total por producto
+       * Calcula el ingreso total por producto ordenados en orden decreciente
        *
        * @param ventas contiene id_venta, id_producto, cantidad y precio_unitario
        * @param spark
@@ -101,5 +95,6 @@ object Examen {
         .withColumn("ingreso", col("cantidad") * col("precio_unitario"))
         .groupBy("id_producto")
         .agg(sum("ingreso").alias("totalIngresos"))
+        .orderBy(desc("totalIngresos"))
     }
 }
